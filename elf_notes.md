@@ -15,6 +15,8 @@ Being an open specification, there's a lot of technical information accessible o
 The primary information sources are as follows:
 
 - https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html
+- https://refspecs.linuxbase.org/elf/gabi4+/ch5.pheader.html
+- https://refspecs.linuxbase.org/elf/gabi4+/ch4.intro.html
 - https://gist.github.com/x0nu11byt3/bcb35c3de461e5fb66173071a2379779
 
 ### ELF Internal File Structure
@@ -49,7 +51,7 @@ The following is a description of a 64-bit ELF header, including which parts are
 - 0x10-0x11: ELF type: 0x02 for executable file, 0x03 for shared object file
 - 0x12-0x13: Machine type: 0xB7 for ARM AARCH64, 0x3E for AMD x86-64 among others
 - 0x14-0x17: ELF file version, 0x01
-- 0x18-0x1F: Entry point address (64 bits for 64-bit ELF, would be 0x18-0x1B for 32-bit)
+- 0x18-0x1F: Entry point virtual address (64 bits for 64-bit ELF, would be 0x18-0x1B for 32-bit)
 - 0x20-0x27: Program Header Table file offset (in bytes, for 64-bit Linux commonly 0x40, if right after header)
 - 0x28-0x2F: Section Header Table file offset (bytes)
 - 0x30-0x33: Processor-specific flags (can be left 0)
@@ -61,4 +63,26 @@ The following is a description of a 64-bit ELF header, including which parts are
 - 0x3E-0x3F: Section Header Table entry index containing the offset to the String Table
 
 ### Program Header
+
+The following is a description of any 64-bit ELF Program Header.
+
+- 4 bytes: Segment type, most common here 0x1 (PT_LOAD)
+- 4 bytes: Flags, permissions specifier using bitmasks (0x1: E, 0x2: W, 0x4: R)
+- 8 bytes: Offset, hex location in the actual file where the segment starts
+- 8 bytes: Virtual Address, the virtual memory address the segment should be loaded to (can't be 0 to avoid nullptr errors)
+- 8 bytes: Physical Address, the physical memory address the segment should be loaded to, on Linux left equal to virtual address, used for bare metal
+- 8 bytes: File size, length (bytes) of segment in the actual file to be loaded
+- 8 bytes: Memory size, length (bytes) of the area in memory the segment should be loaded to, if bigger than file size, the rest is filled with 0
+- 8 bytes: Alignment, defined to be a power of 2 and so that `Offset == Virtual Address mod Alignment`
+
+
+### Machine code
+
+After the program headers, the ELF file can contain machine code (bytes representing processor instructions).
+
+### Section Header
+
+Section headers technically aren't actually necessary, and an ELF file can be executed without them.
+
+They will be described here in further detail later.
 
