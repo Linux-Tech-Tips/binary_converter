@@ -1,12 +1,12 @@
-# Analysis of test.elf
+# Analysis of example.elf
 
-To experiment hands-on and see how ELF files actually work, I wrote the `test.elf` program in a hex editor, to serve as a minimal hello world example.
+To experiment hands-on and see how ELF files actually work, I wrote the `example.elf` program in a hex editor, to serve as a minimal hello world example.
 
 This accompanying document contains an analysis of all bytes in the file, to convey understanding of the actual binary.
 
 ## Obtaining bytes
 
-The command `hexdump -X test.elf` can be used to obtain the bytes of the binary in text format.
+The command `hexdump -X example.elf` can be used to obtain the bytes of the binary in text format.
 
 The following output can be obtained:
 
