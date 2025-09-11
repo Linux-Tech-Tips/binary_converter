@@ -128,3 +128,5 @@ This leads to the segments being the following:
   - Offset: `0x2B0`, Virtual/Physical Address: `0x4002B0`
   - File size: `0x8D` (141), Memory size: `0x8E` (142), Alignment: `0x100000`
 
+The entry point to the program would thus be the address `0x4000B0`.
+
