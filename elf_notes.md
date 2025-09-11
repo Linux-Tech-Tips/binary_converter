@@ -84,5 +84,5 @@ After the program headers, the ELF file can contain machine code (bytes represen
 
 Section headers technically aren't actually necessary, and an ELF file can be executed without them.
 
-They will be described here in further detail later.
+They might be described here in further detail later.
 
