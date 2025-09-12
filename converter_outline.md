@@ -134,14 +134,20 @@ The entry point to the program would thus be the address `0x4000B0`.
 
 ## Notes on some program instructions
 
+**Stack Usage:**
+
 To use the stack, we can use the usual `add`/`sub` instructions.
 The stack pointer (sp) in AArch64 is, in instructions that support the stack, the 32nd register, `0b11111`.
+
+**Mov instruction for system calls:**
 
 Syscall setup requires a few `mov` instructions, to registers `x8` for the system call ID and `x1, x2...` for the system call arguments.
 The IDs used here will be `64` (write), `63` (read) and `93` (exit).
 For the `mov` instruction itself, as per the 
 [Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/MOV--wide-immediate---Move--wide-immediate---an-alias-of-MOVZ-), 
 the `sf` flag is to be set to 1 for 64-bit, and the `hw` flag is to be set to `00` (no shitf).
+
+**Address Pool:**
 
 To save a 64-bit memory address into a 64-bit instruction, an address pool must be used.
 This is because the instruction width is 4 bytes, which is shorter than the 8 bytes necessary for an address,
@@ -152,5 +158,13 @@ The address pool can be accessed using the LDR (literal) instruction, available 
 Here, x is set to 1 to signify 64 bits, making the instruction `01011000 imm19 Rt`.
 The `imm19` value here contains a signed offset from the PC at which the word to load is found.
 The offset value should be the number of instructions rather than the number of bytes, as the CPU itself multiplies it by 4.
+
+**Stack Pointer Mov:**
+
+Moving the stack pointer address into a regular register is done using a different instruction than a MOV (register).
+The specific instruction MOV (to/from SP) has documentation which can be found at the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0602/2020-12/Base-Instructions/MOV--to-from-SP---Move-between-register-and-stack-pointer--an-alias-of-ADD--immediate--).
+As mentioned before, the stack can be represented as `0b11111` here.
+
 
 
