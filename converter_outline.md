@@ -111,10 +111,12 @@ This is why, for a project such as this, mapping out the planned program is impo
 
 The executable will have 2 segments, one with instructions and one with data.
 Adding the size of the ELF header with the size of 2 program headers, this leads to the first segment offset being `0xB0`.
-With alignment to `0x100000` we can place the segment to the VRAM address `0x4000B0`, to clear enough space beforehand for OS/kernel things.
+With alignment to `0x1000` we can place the segment to the VRAM address `0x4000B0`, to clear enough space beforehand for OS/kernel things.
+A small alignment value is chosen to ensure the executable uses as little RAM as possible.
 
 If we pad the first segment to be 512 bytes in the executable itself as well, it can be at offset `0x2B0`.
-This allows us to place it into VRAM directly after the first, at address `0x4002B0` aligned to `0x100000`.
+This allows us to place it into VRAM directly after the first, at address `0x4012B0` aligned to `0x1000`.
+The address is `0x4012B0` rather than `0x4002B0` as per the alignment, to ensure the segments aren't mapped to the same virtual memory.
 The content itself of the second segment is (based on the known program strings) 141 bytes, with an additional single zeroed bss byte at the end.
 
 This leads to the segments being the following:
@@ -122,11 +124,33 @@ This leads to the segments being the following:
 - **Segment 1:**
   - PT_LOAD (`0x1`), R-E (`0x5`)
   - Offset: `0xB0`, Virtual/Physical Address: `0x4000B0`
-  - File size: `0x200` (512), Memory size: `0x200` (512), Alignment: `0x100000`
+  - File size: `0x200` (512), Memory size: `0x200` (512), Alignment: `0x1000`
 - **Segment 2:**
   - PT_LOAD (`0x1`), RW- (`0x6`)
-  - Offset: `0x2B0`, Virtual/Physical Address: `0x4002B0`
-  - File size: `0x8D` (141), Memory size: `0x8E` (142), Alignment: `0x100000`
+  - Offset: `0x2B0`, Virtual/Physical Address: `0x4012B0`
+  - File size: `0x8D` (141), Memory size: `0x8E` (142), Alignment: `0x1000`
 
 The entry point to the program would thus be the address `0x4000B0`.
+
+## Notes on some program instructions
+
+To use the stack, we can use the usual `add`/`sub` instructions.
+The stack pointer (sp) in AArch64 is, in instructions that support the stack, the 32nd register, `0b11111`.
+
+Syscall setup requires a few `mov` instructions, to registers `x8` for the system call ID and `x1, x2...` for the system call arguments.
+The IDs used here will be `64` (write), `63` (read) and `93` (exit).
+For the `mov` instruction itself, as per the 
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/MOV--wide-immediate---Move--wide-immediate---an-alias-of-MOVZ-), 
+the `sf` flag is to be set to 1 for 64-bit, and the `hw` flag is to be set to `00` (no shitf).
+
+To save a 64-bit memory address into a 64-bit instruction, an address pool must be used.
+This is because the instruction width is 4 bytes, which is shorter than the 8 bytes necessary for an address,
+and being a RISC architecture, AArch64 has a consistent instruction width.
+
+The address pool can be accessed using the LDR (literal) instruction, available here in the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/LDR--literal---Load-Register--literal--).
+Here, x is set to 1 to signify 64 bits, making the instruction `01011000 imm19 Rt`.
+The `imm19` value here contains a signed offset from the PC at which the word to load is found.
+The offset value should be the number of instructions rather than the number of bytes, as the CPU itself multiplies it by 4.
+
 

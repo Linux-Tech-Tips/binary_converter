@@ -75,6 +75,9 @@ The following is a description of any 64-bit ELF Program Header.
 - 8 bytes: Memory size, length (bytes) of the area in memory the segment should be loaded to, if bigger than file size, the rest is filled with 0
 - 8 bytes: Alignment, defined to be a power of 2 and so that `Offset == Virtual Address mod Alignment`
 
+The Alignment field has an additional constraint when working with multiple program headers, in AArch64 Linux.
+The Virtual Address divided by the alignment for any two segments can't be the same value.
+
 
 ### Machine code
 
