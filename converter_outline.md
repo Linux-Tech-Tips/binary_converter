@@ -183,6 +183,14 @@ To load a byte from a memory address with a register-specified offset, LDRB (reg
 The option flag is set to 011 for shifted rather than extended register.
 The `S` option is set to 0 for no shift amount.
 
+**Store Byte:**
+
+To store a byte to a memory address with a register-specified offset, STRB (register) can be used, as per the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/STRB--register---Store-Register-Byte--register--).
+The option flag is set to 011 for shifted rather than extended register.
+The `S` option is set to 0 for no shift amount.
+This instruction works basically the same way as the aforementioned LDRB (register).
+
 **Logical Shift Left:**
 
 The LSL (immediate) instruction is an alias for UBFM, the unsigned bitfield move, as per the
