@@ -166,5 +166,29 @@ The specific instruction MOV (to/from SP) has documentation which can be found a
 [Arm developer reference](https://developer.arm.com/documentation/ddi0602/2020-12/Base-Instructions/MOV--to-from-SP---Move-between-register-and-stack-pointer--an-alias-of-ADD--immediate--).
 As mentioned before, the stack can be represented as `0b11111` here.
 
+**Branch Instructions:**
+
+The standard branch instruction jumps to a PC-relative signed offset, with the format `000101 imm26`.
+
+Conditional branch instructions first require a CMP instruction (which is fairly straightforward).
+The B.cond instruction itself contains a field called `cond` which encodes the condition, as per the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/B-cond--Branch-conditionally-?lang=en).
+This is one of the standard conditions, encoded in the standard way.
+The standard encodings can be found online, for example [here](https://finkmartin.com/aarch64/b_cond.html).
+
+**Load Byte:**
+
+To load a byte from a memory address with a register-specified offset, LDRB (register) can be used, as per the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/LDRB--register---Load-Register-Byte--register--).
+The option flag is set to 011 for shifted rather than extended register.
+The `S` option is set to 0 for no shift amount.
+
+**Logical Shift Left:**
+
+The LSL (immediate) instruction is an alias for UBFM, the unsigned bitfield move, as per the
+[Arm developer reference](https://developer.arm.com/documentation/ddi0596/2020-12/Base-Instructions/LSL--immediate---Logical-Shift-Left--immediate---an-alias-of-UBFM-)
+In binary, this is represented as an UBFM instruction with a few specific settings.
+The `sf` flag and the `N` flag are set to 1 to signify 64 bits.
+The `immr` field is set to `-shift MOD 32` and the `imms` field is set to `63 - shift`, given a value `shift` to shift by.
 
 
