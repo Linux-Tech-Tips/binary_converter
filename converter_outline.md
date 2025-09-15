@@ -199,4 +199,30 @@ In binary, this is represented as an UBFM instruction with a few specific settin
 The `sf` flag and the `N` flag are set to 1 to signify 64 bits.
 The `immr` field is set to `-shift MOD 32` and the `imms` field is set to `63 - shift`, given a value `shift` to shift by.
 
+## Notes on bytecode
+
+The flowchart displayed above outlines how the binary is split up into sections.
+The following is a brief description of which parts are where in the byte code itself.
+The addresses written here are the offsets of the first of the 4 bytes of each instruction within the `.elf` file.
+
+- `0xB0` ............ Allocating 64 bits on stack
+- `0xB4`-`0xC4` ..... Printing introduction text
+- `0xC8`-`0xD4` ..... Printing text asking for binary number
+- `0xD8`-`0xE8` ..... Reading user input containing binary number
+- `0xEC`-`0x120` .... Convert read bytes into register
+- `0x124`-`0x150` ... Print register to decimal bytes
+- `0x154`-`0x170` ... Store printed register and print 'the number is' text
+- `0x174`-`0x180` ... Get printed number register and print to stdout
+- `0x184`-`0x190` ... Print prompt asking user to convert again or not
+- `0x194`-`0x1A4` ... Read user input containing y/n answer
+- `0x1A8`-`0x1AC` ... Load read user input byte and set up for next write
+- `0x1B0`-`0x1B4` ... Check if user input is 'Y' and branch to `0xC8` if so
+- `0x1B8`-`0x1BC` ... Check if user input is 'y' and branch to `0xC8` if so
+- `0x1C0`-`0x1C8` ... Exit with code 0 if this part reached
+
+The remaining parts are as follows:
+
+- `0x1CC`-`0x27F` ... Padding until next part, null bytes
+- `0x280`-`0x2AF` ... Local literal/address pool for LDR (literal) instructions
+- `0x2B0`-`EOF` ..... Data segment containing strings
 
