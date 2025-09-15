@@ -1,12 +1,12 @@
-# Analysis of example.elf
+# Analysis of hello.elf
 
-To experiment hands-on and see how ELF files actually work, I wrote the `example.elf` program in a hex editor, to serve as a minimal hello world example.
+To experiment hands-on and see how ELF files actually work, I wrote the `hello.elf` program in a hex editor, to serve as a minimal hello world example.
 
 This accompanying document contains an analysis of all bytes in the file, to convey understanding of the actual binary.
 
 ## Obtaining bytes
 
-The command `hexdump -X example.elf` can be used to obtain the bytes of the binary in text format.
+The command `hexdump -X hello.elf` can be used to obtain the bytes of the binary in text format.
 
 The following output can be obtained:
 
@@ -152,5 +152,5 @@ This was shown previously when loading the address to the hello world text into 
 The Literal Pool is followed by a component where the actual text is stored.
 This would typically be a section known as `.data`, however, since there's no section header table, it's not entirely counted as such.
 
-This concludes the machine code and the entire ELF example file.
+This concludes the machine code and the entire ELF example hello file.
 
